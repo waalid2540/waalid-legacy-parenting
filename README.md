@@ -1,6 +1,13 @@
-# Walaaid Legacy Parenting - Enterprise AI-Powered Islamic Parenting Platform
+# 🕌 Waalid Legacy - AI-Powered Islamic Parenting Platform
 
-A comprehensive, enterprise-grade parenting support platform combining Islamic wisdom with modern AI technology to help parents raise confident, compassionate children.
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+
+> Empowering Muslim parents worldwide with AI-driven Islamic parenting guidance in English, Somali, and Arabic
+
+A comprehensive, enterprise-grade parenting support platform combining Islamic wisdom from Quran & Sunnah with modern AI technology to help parents raise confident, faith-centered children in the West.
 
 ## 🚀 Features
 
