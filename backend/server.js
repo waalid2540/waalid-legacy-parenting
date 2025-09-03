@@ -145,7 +145,7 @@ app.get('/api/workshops', (req, res) => {
 });
 
 // Catch-all route for debugging 404s
-app.all('*', (req, res) => {
+app.use((req, res) => {
   console.log(`404 - Route not found: ${req.method} ${req.path}`);
   res.status(404).json({
     error: 'Route not found',
