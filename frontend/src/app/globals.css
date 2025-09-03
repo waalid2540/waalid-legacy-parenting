@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000000 !important;
+  color: #ffffff !important;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Force visibility for all inputs */
+input, textarea, select {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 2px solid #4a5568 !important;
+  padding: 0.75rem !important;
+  border-radius: 0.5rem !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  background: #2d2d2d !important;
+  border-color: #8b5cf6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #a0aec0 !important;
+}
+
+button {
+  cursor: pointer !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 0.75rem !important;
+  border: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4) !important;
+}
+
+.card {
+  background: #1a1a1a !important;
+  border: 1px solid #374151 !important;
+  border-radius: 1rem !important;
+  padding: 1.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2) !important;
+  transform: translateY(-4px) !important;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #a855f7, #6366f1) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.nav-bg {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
