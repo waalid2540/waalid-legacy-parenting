@@ -26,7 +26,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// AI Coach route (mock for now)
+// AI Coach routes
 app.post('/api/ai-coach/ask', async (req, res) => {
   const { question, language = 'english' } = req.body;
   
@@ -44,6 +44,29 @@ app.post('/api/ai-coach/ask', async (req, res) => {
       language,
       timestamp: new Date().toISOString()
     }
+  });
+});
+
+// AI Coach history route
+app.get('/api/ai-coach/history', async (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      {
+        id: 1,
+        question: "How do I teach my child about prayer?",
+        response: "Start with short, simple explanations about talking to Allah...",
+        language: "english",
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        question: "Sidee ugu baraa ilmaha tukashada?",
+        response: "Ka bilaaw sharaxaad kooban oo fudud oo ku saabsan la hadlida Allah...",
+        language: "somali", 
+        createdAt: new Date(Date.now() - 86400000).toISOString()
+      }
+    ]
   });
 });
 
