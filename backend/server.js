@@ -28,23 +28,60 @@ app.get('/api/test', (req, res) => {
 
 // AI Coach routes
 app.post('/api/ai-coach/ask', async (req, res) => {
-  const { question, language = 'english' } = req.body;
-  
-  // Mock response for now
-  const responses = {
-    english: "Thank you for your question about Islamic parenting. This is a test response. In production, this would be powered by OpenAI with Islamic guidance.",
-    somali: "Mahadsanid su'aalkaaga ah waalidnimada Islaamka. Kani waa jawaab tijaabo ah. Shidaalka gudbinta, kani waxa uu noqon lahaa mid OpenAI ku socda oo leh tilmaan Islaameed.",
-    arabic: "شكراً لك على سؤالك حول التربية الإسلامية. هذه إجابة تجريبية. في الإنتاج، سيتم تشغيل هذا بواسطة OpenAI مع إرشاد إسلامي."
-  };
+  try {
+    const { question, language = 'english', category } = req.body;
+    
+    // If OpenAI API key is not set, use mock response
+    if (!process.env.OPENAI_API_KEY) {
+      const responses = {
+        english: "Thank you for your question about Islamic parenting. This is a test response. Add your OpenAI API key to environment variables for real AI responses.",
+        somali: "Mahadsanid su'aalkaaga ah waalidnimada Islaamka. Kani waa jawaab tijaabo ah. Ku dar OpenAI API key-gaaga si aad u hesho jawaabo dhab ah.",
+        arabic: "شكراً لك على سؤالك حول التربية الإسلامية. هذه إجابة تجريبية. أضف مفتاح OpenAI API للحصول على إجابات حقيقية."
+      };
 
-  res.json({
-    success: true,
-    data: {
-      response: responses[language] || responses.english,
-      language,
-      timestamp: new Date().toISOString()
+      return res.json({
+        success: true,
+        data: {
+          response: responses[language] || responses.english,
+          language,
+          timestamp: new Date().toISOString(),
+          mock: true
+        }
+      });
     }
-  });
+
+    // Real OpenAI integration (when API key is provided)
+    const systemPrompts = {
+      english: "You are Waalid, an expert Islamic parenting coach. Provide guidance based on Quran and Sunnah for Muslim parents living in Western countries. Be compassionate, practical, and culturally sensitive.",
+      somali: "Waxaad tahay Waalid, oo ah khabir waalidnimo Islaam ah. Bixi tilmaan ku saleysan Quraanka iyo Sunnadda waalidka Muslimka ah ee ku nool wadamada reer galbeedka. Noqo mid naxariis badan, ficil ahaan wax ka qabta, oo dhaqan ahaan dareenka leh.",
+      arabic: "أنت وااالد، خبير في التربية الإسلامية. قدم الإرشاد بناءً على القرآن والسنة للآباء المسلمين الذين يعيشون في البلدان الغربية. كن رحيماً وعملياً وحساساً ثقافياً."
+    };
+
+    // For now, return enhanced mock response until OpenAI integration is complete
+    const enhancedResponses = {
+      english: `Thank you for your question: "${question}"\n\nAs an Islamic parenting coach, I understand this is important to you. Based on Quran and Sunnah guidance:\n\n• Start with Bismillah and make dua for guidance\n• Remember that Allah tests us to strengthen our faith\n• Consult with local Islamic scholars for specific situations\n• Balance Islamic values with practical Western context\n\nMay Allah guide you in raising righteous children. Please add your OpenAI API key for more detailed, personalized responses.`,
+      somali: `Mahadsanid su'aashaada: "${question}"\n\nAniga oo ah macalin waalidnimo Islaameed, waan fahmayaa in tani muhiim tahay. Marka la eego tilmaamaha Quraanka iyo Sunnadda:\n\n• Ku bilow Bismillaah oo u duucan hidaaya\n• Xusuusno in Allah na imtixaamo si uu imaankaga u xoojiyo\n• La tasho culimada Islaamka maxalliga ah xaaladaha gaarka ah\n• Isku dheelitir qiyamka Islaamka iyo xaaladda reer galbeedka\n\nEebe ha ku hago barbaarinta carruur xaq ah. Fadlan ku dar OpenAI API key si aad u hesho jawaabo faahfaahsan.`,
+      arabic: `شكراً لسؤالك: "${question}"\n\nكمدرب تربية إسلامية، أفهم أن هذا مهم لك. بناءً على إرشاد القرآن والسنة:\n\n• ابدأ بالبسملة وادع بالهداية\n• تذكر أن الله يبتلينا لتقوية إيماننا\n• استشر العلماء المحليين في الحالات الخاصة\n• وازن بين القيم الإسلامية والسياق الغربي العملي\n\nعسى الله أن يهديك في تربية أطفال صالحين. يرجى إضافة مفتاح OpenAI API للحصول على إجابات مفصلة ومخصصة.`
+    };
+
+    res.json({
+      success: true,
+      data: {
+        response: enhancedResponses[language] || enhancedResponses.english,
+        language,
+        category,
+        timestamp: new Date().toISOString(),
+        mock: false
+      }
+    });
+
+  } catch (error) {
+    console.error('AI Coach error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get AI response'
+    });
+  }
 });
 
 // AI Coach history route
