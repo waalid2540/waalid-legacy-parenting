@@ -8,10 +8,18 @@ const prisma = new PrismaClient();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
-  credentials: true
+  origin: '*', // Allow all origins for now
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -136,11 +144,30 @@ app.get('/api/workshops', (req, res) => {
   });
 });
 
+// Catch-all route for debugging 404s
+app.all('*', (req, res) => {
+  console.log(`404 - Route not found: ${req.method} ${req.path}`);
+  res.status(404).json({
+    error: 'Route not found',
+    method: req.method,
+    path: req.path,
+    timestamp: new Date().toISOString()
+  });
+});
+
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Waalid Legacy Backend running on port ${PORT}`);
   console.log(`📡 API available at http://0.0.0.0:${PORT}/api`);
+  console.log(`📋 Available routes:`);
+  console.log(`  - GET  /health`);
+  console.log(`  - GET  /api/test`);
+  console.log(`  - POST /api/ai-coach/ask`);
+  console.log(`  - GET  /api/ai-coach/history`);
+  console.log(`  - GET  /api/community/posts`);
+  console.log(`  - GET  /api/feed/daily-tip`);
+  console.log(`  - GET  /api/workshops`);
 });
 
 // Graceful shutdown
