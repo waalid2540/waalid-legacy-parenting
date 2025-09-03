@@ -4,8 +4,9 @@ services:
     name: waalid-legacy-backend
     runtime: node
     plan: starter
-    buildCommand: cd backend && npm install && npx prisma generate && npm run build
-    startCommand: cd backend && npm start
+    rootDir: ./backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -27,8 +28,9 @@ services:
     name: waalid-legacy-frontend
     runtime: node
     plan: starter
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
+    rootDir: ./frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://waalid-legacy-backend.onrender.com/api
