@@ -93,7 +93,7 @@ export default function DailyTipsPage() {
             <div className="flex items-center space-x-3">
               <select 
                 value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value as any)}
+                onChange={(e) => setSelectedLanguage(e.target.value as 'english' | 'somali' | 'arabic')}
                 className="bg-gray-800 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm"
               >
                 <option value="english">🇬🇧 English</option>

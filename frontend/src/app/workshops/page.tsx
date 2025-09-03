@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Play, Download, Star, Clock, Users, ArrowLeft, Filter, Search, Crown, Zap } from 'lucide-react';
+import { BookOpen, Play, Download, Star, Clock, Users, ArrowLeft, Filter, Search, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WorkshopsPage() {

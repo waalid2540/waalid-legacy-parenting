@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, MessageSquare, Heart, Share2, ArrowLeft, Crown, Globe, Trending, Filter } from 'lucide-react';
+import { Users, MessageSquare, Heart, Share2, ArrowLeft, Crown, Globe, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CommunityPage() {

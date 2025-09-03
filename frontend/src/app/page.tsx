@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { 
   Brain, Users, BookOpen, Calendar, ArrowRight, Check, Star, Globe, 
-  Shield, Zap, MessageSquare, TrendingUp, Award, Clock, Heart,
   Sparkles, ChevronRight, Play, Menu, X
 } from 'lucide-react';
 import { useState } from 'react';
@@ -301,7 +300,7 @@ export default function Home() {
                     <Star key={i} className="h-5 w-5 fill-yellow-500 text-yellow-500" />
                   ))}
                 </div>
-                <p className="text-gray-300 mb-4 italic">"{testimonial.text}"</p>
+                <p className="text-gray-300 mb-4 italic">&ldquo;{testimonial.text}&rdquo;</p>
                 <div>
                   <p className="font-semibold text-white">{testimonial.name}</p>
                   <p className="text-sm text-gray-500">{testimonial.location}</p>
