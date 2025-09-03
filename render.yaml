@@ -36,4 +36,4 @@ services:
 databases:
   # PostgreSQL Database
   - name: waalid-legacy-db
-    plan: starter
+    plan: free
