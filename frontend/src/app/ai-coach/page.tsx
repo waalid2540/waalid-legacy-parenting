@@ -33,6 +33,8 @@ export default function AICoachPage() {
   const { data: history } = useQuery({
     queryKey: ['ai-coach-history'],
     queryFn: () => aiCoachAPI.getHistory(),
+    retry: 1,
+    staleTime: 30000,
   });
 
   const categories = {
@@ -323,7 +325,7 @@ export default function AICoachPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                {history?.data?.slice(0, 5).map((item: { question: string; createdAt: string; language: string }, index: number) => (
+                {(history?.data && Array.isArray(history.data) ? history.data.slice(0, 5) : []).map((item: { question: string; createdAt: string; language: string }, index: number) => (
                   <div key={index} className="border-b last:border-0 py-3 hover:bg-gray-50 rounded px-2 cursor-pointer">
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
