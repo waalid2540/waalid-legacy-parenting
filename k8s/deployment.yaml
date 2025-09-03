@@ -1,0 +1,189 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: walaaid-backend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: walaaid-backend
+  template:
+    metadata:
+      labels:
+        app: walaaid-backend
+    spec:
+      containers:
+      - name: backend
+        image: your-registry/walaaid-backend:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: walaaid-secrets
+              key: database-url
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: walaaid-secrets
+              key: redis-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: walaaid-secrets
+              key: jwt-secret
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: walaaid-secrets
+              key: openai-api-key
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: walaaid-frontend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: walaaid-frontend
+  template:
+    metadata:
+      labels:
+        app: walaaid-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-registry/walaaid-frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://api.walaaid.com"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: walaaid-backend-service
+  namespace: production
+spec:
+  selector:
+    app: walaaid-backend
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: walaaid-frontend-service
+  namespace: production
+spec:
+  selector:
+    app: walaaid-frontend
+  ports:
+  - port: 3000
+    targetPort: 3000
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: walaaid-ingress
+  namespace: production
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - walaaid.com
+    - api.walaaid.com
+    secretName: walaaid-tls
+  rules:
+  - host: walaaid.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: walaaid-frontend-service
+            port:
+              number: 3000
+  - host: api.walaaid.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: walaaid-backend-service
+            port:
+              number: 5000
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: walaaid-backend-hpa
+  namespace: production
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: walaaid-backend
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

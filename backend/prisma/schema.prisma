@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  avatar    String?
+  role      Role     @default(PARENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+  aiCoachSessions AiCoachSession[]
+  enrollments    Enrollment[]
+
+  @@map("users")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  likes    Like[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id       String @id @default(uuid())
+  content  String
+  postId   String
+  authorId String
+  createdAt DateTime @default(now())
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Like {
+  id     String @id @default(uuid())
+  postId String
+  userId String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("likes")
+}
+
+model AiCoachSession {
+  id        String   @id @default(uuid())
+  userId    String
+  question  String
+  response  String
+  language  Language @default(ENGLISH)
+  category  String?
+  sentiment String?
+  rating    Int?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_coach_sessions")
+}
+
+model DailyTip {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  category  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("daily_tips")
+}
+
+model Workshop {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  type        WorkshopType
+  content     String?
+  videoUrl    String?
+  ebookUrl    String?
+  price       Float    @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  enrollments Enrollment[]
+
+  @@map("workshops")
+}
+
+model Enrollment {
+  id          String   @id @default(uuid())
+  userId      String
+  workshopId  String
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workshopId])
+  @@map("enrollments")
+}
+
+enum Role {
+  PARENT
+  ADMIN
+}
+
+enum WorkshopType {
+  VIDEO
+  EBOOK
+  COURSE
+}
+
+enum Language {
+  ENGLISH
+  SOMALI
+  ARABIC
+}

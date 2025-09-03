@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: walaaid-postgres
+    environment:
+      POSTGRES_USER: walaaid
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeMe123}
+      POSTGRES_DB: walaaid_parenting
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - walaaid-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U walaaid"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: walaaid-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-changeMe456}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - walaaid-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: walaaid-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://walaaid:${DB_PASSWORD:-changeMe123}@postgres:5432/walaaid_parenting
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-changeMe456}
+      JWT_SECRET: ${JWT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SENTRY_DSN: ${SENTRY_DSN}
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - walaaid-network
+    volumes:
+      - ./backend/logs:/app/logs
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: walaaid-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:5000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - walaaid-network
+
+networks:
+  walaaid-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
