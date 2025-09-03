@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { 
   Brain, Users, BookOpen, Calendar, ArrowRight, Check, Star, Globe, 
-  Zap, Sparkles, ChevronRight, Play, Menu, X
+  Zap, MessageSquare, Clock, Sparkles, ChevronRight, Play, Menu, X
 } from 'lucide-react';
 import { useState } from 'react';
 
